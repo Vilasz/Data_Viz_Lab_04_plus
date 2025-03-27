@@ -1,4 +1,4 @@
-console.log("IT’S ALIVE!");
+/* console.log("IT’S ALIVE!");
 
 function $$ (selector, context = document) {
     return Array.from(context.querySelectorAll(selector));
@@ -36,3 +36,5 @@ for (let p of pages) {
     nav.insertAdjacentHTML("beforeend", `<a href="${ url }">${ title }</a>` );
     
 }
+    */
+

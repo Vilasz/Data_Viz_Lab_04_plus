@@ -1,22 +1,42 @@
+/* =============================
+   BASE VARIABLES
+============================= */
+:root {
+    --grey: oklch(80% 3% 200);
+    --white: #ffffff;
+    --black: #1a1a1a;
+    --dark-grey: #2a2a2a;
+    --button-bg: oklch(80% 3% 200);
+    --button-hover: oklch(80% 3% 150);
+    --skyblue: deepskyblue;
+}
+
+/* =============================
+   DEFAULT LIGHT THEME (fallback)
+============================= */
 body {
-    /* Set line height to 1.5 times the font size
-       and use the OS’s UI font as the website font
-     */
     font: 100%/1.5 system-ui;
+    /* background-color: oklch(from var(--grey) 95% 5% h); */
+    color: black;
     max-width: 100%;
     margin: 0 auto;
     padding: 0 1rem;
 }
-nav{
+
+/* =============================
+   NAVIGATION STYLES
+============================= */
+nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-bottom-color: oklch(80% 3% 200);
+    border-bottom: 1px solid var(--grey);
     padding-bottom: 0.5rem;
     margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
+
 nav a {
     flex: 1;
     text-decoration: none;
@@ -25,21 +45,26 @@ nav a {
     padding: 0.5rem;
     transition: color 0.3s ease, background-color 0.3s ease;
 }
+
 nav a:hover {
     color: var(--white);
-    background-color: oklch(80% 3% 200);
+    background-color: var(--grey);
 }
+
 nav a.active {
     border-bottom: 2px solid var(--skyblue);
 }
-:root {
-    --grey: oklch(80% 3% 200);
-    --white: #ffffff;
-}
-body { background-color: oklch(from var(--grey) 95% 5% h); } /*a lighter grey*/
-.container { background-color: var(--white); }
 
-/* Contact Form Styles */
+/* =============================
+   CONTAINER & BODY CLASSES
+============================= */
+.container {
+    background-color: var(--white);
+}
+
+/* =============================
+   CONTACT FORM
+============================= */
 .contact-form {
     max-width: 600px;
     margin: 2rem auto;
@@ -72,7 +97,7 @@ body { background-color: oklch(from var(--grey) 95% 5% h); } /*a lighter grey*/
     margin-top: 1rem;
     border: none;
     border-radius: 4px;
-    background-color: oklch(80% 3% 200);
+    background-color: var(--button-bg);
     color: var(--white);
     font-size: 1rem;
     cursor: pointer;
@@ -80,27 +105,29 @@ body { background-color: oklch(from var(--grey) 95% 5% h); } /*a lighter grey*/
 }
 
 .contact-form button:hover {
-    background-color: oklch(80% 3% 150);
+    background-color: var(--button-hover);
 }
+
 input, textarea {
-	font: 100%/1.5 system-ui;
-	
+    font: 100%/1.5 system-ui;
 }
 
 label, input, textarea, button {
-	display: block;
+    display: block;
 }
 
 label {
-	font-weight: bold;
-	margin-block: 1rem;
+    font-weight: bold;
+    margin-block: 1rem;
 }
 
 img {
     max-width: 100%;
 }
 
-/* Step 4.3: Applying a responsive grid */
+/* =============================
+   PROJECT GRID
+============================= */
 .projects {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
@@ -117,7 +144,9 @@ img {
     margin: 0;
 }
 
-/* Step 4.4: Finishing touches */
+/* =============================
+   TYPOGRAPHY
+============================= */
 h1 {
     font-size: 400%;
 }
@@ -127,7 +156,112 @@ h1, h2, h3, h4, h5, h6 {
     text-wrap: balance;
 }
 
-form{
-	display: grid;
-	grid-template-columns: 1fr 1fr;
+form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+/* =============================
+   DARK THEME - CLASS BASED
+============================= */
+.dark-theme body {
+    background-color: var(--black);
+    color: white;
+}
+
+.dark-theme .container,
+.dark-theme .contact-form {
+    background-color: var(--dark-grey);
+}
+
+.dark-theme nav a:hover {
+    background-color: #333;
+}
+
+.dark-theme .contact-form button {
+    background-color: #555;
+    color: white;
+}
+
+.dark-theme .contact-form button:hover {
+    background-color: #666;
+}
+
+/* =============================
+   LIGHT THEME - CLASS BASED
+============================= */
+.light-theme body {
+    background-color: oklch(from var(--grey) 95% 5% h);
+    color: black;
+}
+
+.light-theme .container,
+.light-theme .contact-form {
+    background-color: var(--white);
+}
+
+.light-theme nav a:hover {
+    background-color: var(--grey);
+}
+
+.light-theme .contact-form button {
+    background-color: var(--button-bg);
+    color: var(--white);
+}
+
+.light-theme .contact-form button:hover {
+    background-color: var(--button-hover);
+}
+
+/* =============================
+   AUTO THEME VIA MEDIA QUERY
+============================= */
+@media (prefers-color-scheme: dark) {
+    :root:not(.light-theme):not(.dark-theme) body {
+        background-color: var(--black);
+        color: white;
+    }
+
+    :root:not(.light-theme):not(.dark-theme) .container,
+    :root:not(.light-theme):not(.dark-theme) .contact-form {
+        background-color: var(--dark-grey);
+    }
+
+    :root:not(.light-theme):not(.dark-theme) nav a:hover {
+        background-color: #333;
+    }
+
+    :root:not(.light-theme):not(.dark-theme) .contact-form button {
+        background-color: #555;
+        color: white;
+    }
+
+    :root:not(.light-theme):not(.dark-theme) .contact-form button:hover {
+        background-color: #666;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    :root:not(.light-theme):not(.dark-theme) body {
+        background-color: oklch(from var(--grey) 95% 5% h);
+        color: black;
+    }
+
+    :root:not(.light-theme):not(.dark-theme) .container,
+    :root:not(.light-theme):not(.dark-theme) .contact-form {
+        background-color: var(--white);
+    }
+
+    :root:not(.light-theme):not(.dark-theme) nav a:hover {
+        background-color: var(--grey);
+    }
+
+    :root:not(.light-theme):not(.dark-theme) .contact-form button {
+        background-color: var(--button-bg);
+        color: var(--white);
+    }
+
+    :root:not(.light-theme):not(.dark-theme) .contact-form button:hover {
+        background-color: var(--button-hover);
+    }
 }
