@@ -7,7 +7,8 @@
 		{ url: "/", title: "Home" },
 		{ url: "/projects", title: "Projects" },
 		{ url: "/contact", title: "Contact" },
-		{ url: "/resume", title: "Resume" }
+		{ url: "/resume", title: "Resume" },
+		{url:"/meta", title: "Meta"}
 	];
 
 	// Use "auto" to indicate automatic (OS) preference.

@@ -1,39 +1,115 @@
-<body> <!-- Start of "body" section  -->
+<script>
+    import projects from "$lib/projects.json";
+    import Project from "$lib/Project.svelte";
+  
 
-    <div class= "nav-container"></div>
+    import { onMount } from "svelte";
+
+    let githubData = null;
+    let loading = true;
+    let error = null;
+
+    onMount(async () => {
+        try {
+            const response = await fetch("https://api.github.com/users/Vilasz");
+            githubData = await response.json();
+        } catch (err) {
+            error = err;
+        }
+        loading = false;
+    });
 
 
-    <!-- <h1> (Heading 1) represents the main heading of a webpage or a section.-->
-    <h1> João Felipe Vilas Boas<!-- Write your name here  --></h1>
 
-    <!-- <p> (Paragraph) represents a paragraph of text.-->
-    <p> First attempt Data Viz Class<!-- Write your description here  --></p>
+  </script>
+  
+  <svelte:head>
+    <title>Mike Wazowski: Personal site and portfolio</title>
+  </svelte:head>
+  <h1> Mike Wazowski</h1>
 
-    <!-- <img> (Image) tag is used to display images.-->
-    <img src="images/my_image.jpeg" alt="A description of the image">
-        <!-- Example:
-            <img src="images/my_image.jpeg" alt="A description of the image">
-        -->
+  
+     
+  <img src="./images/my_image.jpeg" alt="mike" width="500px">
+  
+  <p>Michael "Mike" Thomas Wazowski is the deuteragonist of the 2001 Disney Pixar animated film Monsters, Inc. and the protagonist of its 2013 prequel.
+      Depicted as a diminutive, one-eyed monster with a wisecracking veneer, Mike is an employee of Monsters, Incorporated, where he works closely with his longtime partner/best friend Sulley.
+      Mike's world gets turned upside down when a human girl (nicknamed "Boo") enters the monster world.
+      Teaming up with Sulley to return Boo to her world, Mike uncovers a company conspiracy and helps solve an energy crisis that plagues the entire city of Monstropolis
+  </p>
+  {#await fetch("https://api.github.com/users/Vilasz")}
+    <span>Loading...</span>
+  {:then response}
+    {#await response.json()}
+      <span>Decoding...</span>
+    {:then data} 
+      <section>
+        <h2>My Github Stats</h2>
+        <dl>
+          <dt>Followers</dt>
+          <dd>{data.followers}</dd>
+          <dt>Following</dt>
+          <dd>{data.following}</dd>
+          <dt>Public Repos</dt>
+          <dd>{data.public_repos}</dd>
+        </dl>
+      </section>
+    {:catch error}
+      <span class="error">Something went wrong: {error.message}</span>
+    {/await}
+    {:catch error}
+      <span class="error">Something went wrong: {error.message}</span>
+  {/await}
+  
+  <h2>
+    Latest Projects
+  </h2>
+  <div class="projects">
+  {#each projects.slice(0, 3) as p}
+    <Project data={p} hLevel="3"/>
+  {/each}
 
-    <!-- <nav> (Navigation) is used to create a menu with links to other pages or external sites. -->
-    <!-- <nav> -->
-        <!-- Navigation link to the home page -->
-        <!-- <a href="index.html">Home</a> -->
-            <!--    
-                href="index.html" refers to the file that this link will open.
-                "Home" is the text that will be displayed as the clickable link.
-            -->
+  {#if loading}
+    <p>Loading...</p>
+{:else if error}
+    <p class="error">Something went wrong: {error.message}</p>
+{:else}
+    <section>
+        <h2>My GitHub Stats</h2>
+        <dl>
+            <dt>Followers</dt>
+            <dd>{githubData.followers}</dd>
+            <dt>Following</dt>
+            <dd>{githubData.following}</dd>
+            <dt>Public Repositories</dt>
+            <dd>{githubData.public_repos}</dd>
+        </dl>
+    </section>
+{/if}
 
-        <!-- Complete the navigation as needed following the structure -->
-        <!-- <a href="contact\index.html" target="_blank">Google</a> -->
-            <!-- Navigation link to the ____ page (inside the "____" folder) -->
-        
-        <!-- NOTE: to link to external URLs you cna directly use the link at 'href'. Then, you can set target="_blank" to make it always open in a new tab.
-            For example:
-            <a href="https://www.google.com" target="_blank">Google</a>
-        -->
-    <!-- </nav> -->    
-    
-</body> <!-- End of "body" section  -->
-
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+  </div>
+  
+  <style>
+    dl{
+      display: grid;
+      grid-template-columns: auto;
+    }
+    dt{
+      grid-row: 1;
+      font-family: inherit;
+      font-weight: bold;
+      color: var(--border-gray);
+      text-transform: uppercase;
+    }
+    dd{
+      font-family: inherit;
+      font-weight: bold;
+    }
+    section{
+      border-width:0.15em;
+        border-style:solid;
+        border-color:var(--border-gray);
+      padding-left: 1em;
+      padding-right: 1em;
+    }
+  </style>
