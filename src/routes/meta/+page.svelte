@@ -7,6 +7,13 @@
         offset,
     } from '@floating-ui/dom';
     let commitTooltip;
+    import ScatterPlot from './Scatterplot.svelte';
+
+    let commitProgress = 100;        
+    
+    let xScale, yScale, pctScale;
+    let cutoffTime, shownCommits, shownLines;
+
 
 
     let width = 1000, height = 600;
@@ -48,20 +55,23 @@
         return ret;
         });
     });
-    
-    $: minDate = d3.min(commits.map(d => d.date));
-    $: maxDate = d3.max(commits.map(d => d.date));
-    $: maxDatePlusOne = new Date(maxDate);
-    $: maxDatePlusOne.setDate(maxDatePlusOne.getDate() + 1);
-    
-    $: xScale = d3.scaleTime()
-                  .domain([minDate, maxDatePlusOne])
-                  .range([usableArea.left, usableArea.right])
-                  .nice();
-    
-    $: yScale = d3.scaleLinear()
-                  .domain([24, 0])
-                  .range([usableArea.bottom, usableArea.top]);
+
+    /* ---------- scales & slider ---------- */
+$: {
+	/* build only when commits exist */
+	if (commits.length) {
+		const minDate = d3.min(commits, d => d.date);
+		const maxDate = d3.max(commits, d => d.date);
+		const maxDatePlusOne = d3.timeDay.offset(maxDate, 1);
+
+		xScale   = d3.scaleTime().domain([minDate, maxDatePlusOne]).range([usableArea.left, usableArea.right]).nice();
+		yScale   = d3.scaleLinear().domain([24, 0]).range([usableArea.bottom, usableArea.top]);
+		pctScale = d3.scaleTime().domain([minDate, maxDatePlusOne]).range([0, 100]);
+	}
+}
+$: cutoffTime  = pctScale?.invert(commitProgress);
+$: shownCommits = cutoffTime ? commits.filter(c => c.datetime <= cutoffTime) : commits;
+$: shownLines   = cutoffTime ? data.filter(c => c.datetime <= cutoffTime) : data;
     
     let margin = {top: 10, right: 10, bottom: 30, left: 20};
     
@@ -91,7 +101,7 @@
     }
     
     let hoveredIndex = -1;
-    $: hoveredCommit = commits[hoveredIndex] ?? hoveredCommit ?? {};
+    $: hoveredCommit = shownCommits[hoveredIndex] ?? hoveredCommit ?? {};
     
     let cursor = {x: 0, y: 0};
     </script>
@@ -99,13 +109,34 @@
     <svelte:head>
     <title>Meta</title>
     </svelte:head>
+
+    <div class="controls">
+        <label>
+            Show commits up to:
+            <input type="range" min="0" max="100" step="0.1" bind:value={commitProgress}/>
+            <span>{cutoffTime ? cutoffTime.toLocaleDateString() : '—'}</span>
+        </label>
+    </div>
+
+    <div class="controls"> … </div>
+
+    <ScatterPlot
+        {shownCommits}
+        {xScale}
+        {yScale}
+        {usableArea}
+        {width}
+        {height}
+    />
+
+    
     
     <svg viewBox="0 0 {width} {height}">
         <g class="gridlines" transform="translate({usableArea.left}, 0)" bind:this={yAxisGridlines} />
         <g transform="translate(0, {usableArea.bottom})" bind:this={xAxis} />
         <g transform="translate({usableArea.left}, 0)" bind:this={yAxis} />
         <g class="dots">
-        {#each commits as commit, index }
+        {#each shownCommits as commit, index }
             <circle
                 on:mouseenter={evt => {hoveredIndex = index;
                 cursor = {x: evt.clientX, y: evt.clientY}}}
@@ -232,6 +263,17 @@
         circle:hover {
             transform: scale(1.5);
         }
+
+        .controls{
+            margin-bottom:0.5rem;
+            font:0.9rem/1.4 sans-serif;
+            display:flex;
+            gap:0.5rem;
+            align-items:center;
+        }
+        .controls input[type="range"]{ flex:1 1 auto; }
+        .controls span{ min-width:7rem;text-align:right; }
+
 
 
 
